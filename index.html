@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>कक्षा 8 हिंदी (मल्हार) – कल की परीक्षा</title>
+<style>
+  :root {
+    --ink: #1c1915;
+    --muted: #5c564c;
+    --paper: #f6f1e7;
+    --card: #fffdf8;
+    --line: #e4d9c8;
+    --green: #1f6b45;
+    --green-d: #145233;
+    --amber: #c56a12;
+    --on: #fff4d6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Kohinoor Devanagari", "Devanagari Sangam MN", "Noto Sans Devanagari", "Mangal", sans-serif;
+    line-height: 1.55;
+  }
+  header {
+    position: sticky; top: 0; z-index: 5;
+    background: #1f6b45;
+    color: #fff;
+    padding: 14px 16px 10px;
+  }
+  header h1 { margin: 0; font-size: 1.25rem; font-weight: 700; }
+  header p { margin: 4px 0 0; font-size: 0.92rem; opacity: 0.95; font-family: Georgia, "Iowan Old Style", serif; }
+  .how {
+    margin: 12px 16px 0;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-family: Georgia, "Iowan Old Style", serif;
+    font-size: 0.95rem;
+    color: var(--muted);
+  }
+  nav {
+    display: flex; gap: 8px;
+    overflow-x: auto;
+    padding: 12px 16px;
+  }
+  nav button {
+    flex: 0 0 auto;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink);
+    border-radius: 999px;
+    padding: 8px 14px;
+    font: inherit;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+  nav button small { display: block; font-family: Georgia, serif; font-size: 0.72rem; color: var(--muted); font-weight: 400; }
+  nav button.on { background: var(--green); color: #fff; border-color: var(--green); }
+  nav button.on small { color: #e7f6ee; }
+  main { padding: 0 16px 48px; max-width: 820px; margin: 0 auto; }
+  .set {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 14px 14px 12px;
+    margin: 0 0 14px;
+  }
+  .set.summary { background: #eef7f1; border-color: var(--green); }
+  .set.playing { border-color: var(--amber); box-shadow: 0 0 0 2px #f3d7b4; }
+  .set.done { background: #f3faf6; }
+  .set-head { display: flex; gap: 10px; align-items: flex-start; justify-content: space-between; }
+  .set h2 { margin: 0; font-size: 1.15rem; }
+  .set .en { margin: 2px 0 0; color: var(--muted); font-family: Georgia, serif; font-size: 0.85rem; }
+  .controls { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  button.play, button.ghost {
+    border: 0;
+    border-radius: 999px;
+    font: inherit;
+    cursor: pointer;
+    padding: 8px 14px;
+  }
+  button.play { background: var(--green); color: #fff; font-weight: 700; min-width: 92px; }
+  button.play:hover { background: var(--green-d); }
+  button.ghost { background: #efe8dc; color: var(--ink); }
+  button.ghost.on { background: #f6e2c4; }
+  .lines { list-style: none; margin: 12px 0 0; padding: 0; }
+  .lines li {
+    display: flex; gap: 8px; align-items: flex-start;
+    padding: 8px 8px;
+    border-radius: 10px;
+    border-top: 1px solid #f0e8dc;
+  }
+  .lines li.on { background: var(--on); }
+  .lines li span { flex: 1; font-size: 1.05rem; }
+  .mini {
+    flex: 0 0 auto;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: #fff;
+    cursor: pointer;
+    font-size: 0.95rem;
+  }
+  .status {
+    display: none;
+    margin: 8px 16px 0;
+    padding: 8px 12px;
+    background: #fff4e8;
+    border: 1px solid #efd0a8;
+    border-radius: 10px;
+    font-family: Georgia, serif;
+    font-size: 0.9rem;
+  }
+  .status.show { display: block; }
+</style>
+</head>
+<body>
+<header>
+  <h1>कल की हिंदी परीक्षा · मल्हार</h1>
+  <p>Class 8 · tap Play on one box at a time</p>
+</header>
+<p class="how">Chapters 1, 2, 3 and 5 of Malhar. Start with the green box at the top. That is the chapter summary. Hear it a few times, then use the boxes below for meanings and questions. Each box has its own Play. Press “Again” to keep repeating that box. The small speaker on a line reads just that one line.</p>
+<p class="status" id="status"></p>
+<nav id="nav"></nav>
+<main id="main"></main>
+
+<script type="application/json" id="lessons">
+[
+  {
+    "id": "swadesh",
+    "ml": "स्वदेश",
+    "en": "पाठ 1 · poem",
+    "sets": [
+      {
+        "id": "sw-sum",
+        "summary": true,
+        "title": "सारांश",
+        "en": "Chapter summary. Hear this first. It covers the whole poem.",
+        "lines": [
+          "पाठ एक. स्वदेश. यह कविता है. कवि गयाप्रसाद शुक्ल 'सनेही' हैं.",
+          "कवि कहते हैं कि जिसमें स्वदेश का प्यार नहीं, उसका हृदय पत्थर के समान है.",
+          "जो जीवित रहते हुए उत्साह नहीं जगाता, उसका जीना अर्थशून्य है.",
+          "जो व्यक्ति संसार के साथ नहीं चलता, यह संसार उसका नहीं होता.",
+          "जिसके मन में साहस नहीं, वह लक्ष्य तक नहीं पहुँच सकता.",
+          "हम भारतवासी ही अपने देश के राजा-रानी, यानी उत्तराधिकारी और स्वामी हैं.",
+          "जिसके मन में दया नहीं है, वह भूमि के लिए भार है.",
+          "कविता का मुख्य भाव है देश के प्रति प्रेम."
+        ]
+      },
+      {
+        "id": "sw-shabd",
+        "title": "कठिन शब्द एवं अर्थ",
+        "en": "Hard words and meanings",
+        "lines": [
+          "देश. Country.",
+          "जोश. उत्साह. Excitement.",
+          "सार. अर्थ. Meaning.",
+          "साहस. धैर्य. Courage.",
+          "उद्धार. उन्नति. Progress.",
+          "लासानी. बेजोड़, अतुल्य.",
+          "परवाना. कीट. Small insects.",
+          "भू. भूमि. Earth.",
+          "पार. लक्ष्य. Destination."
+        ]
+      },
+      {
+        "id": "sw-pankti1",
+        "title": "काव्य पंक्ति 1 एवं भावार्थ",
+        "en": "Poem lines and their meaning",
+        "lines": [
+          "वह हृदय नहीं है पत्थर है, जिसमें स्वदेश का प्यार नहीं।",
+          "जो जीवित जोश जगा न सका, उस जीवन में कुछ-कुछ सार नहीं।",
+          "भावार्थ. कवि गयाप्रसाद शुक्ल 'सनेही' कहते हैं कि जिसमें स्वदेश का प्यार नहीं, उसका हृदय पत्थर के समान है।",
+          "जो जीवित रहते हुए उत्साह जगाता नहीं, उसका जीना अर्थशून्य है।"
+        ]
+      },
+      {
+        "id": "sw-pankti2",
+        "title": "काव्य पंक्ति 2 एवं भावार्थ",
+        "en": "Poem lines and their meaning",
+        "lines": [
+          "जो चल न सका संसार-संग, उसका होता संसार नहीं।",
+          "जिसने साहस को छोड़ दिया, वह पहुँच सकेगा पार नहीं।",
+          "भावार्थ. कवि कहते हैं कि जो व्यक्ति संसार के साथ चलता नहीं, यह संसार उसका नहीं होता।",
+          "हमें अपने देश के परिवर्तनों को अपनाकर आगे बढ़ना चाहिए।",
+          "जिस व्यक्ति के मन में साहस नहीं, वह लक्ष्य तक पहुँच नहीं सकता।"
+        ]
+      },
+      {
+        "id": "sw-paryay",
+        "title": "पर्यायवाची एवं समानार्थी शब्द",
+        "en": "Synonyms",
+        "lines": [
+          "संसार. दुनिया, जग.",
+          "भू, भूमि. धरा, पृथ्वी.",
+          "जोश. उत्साह, उमंग.",
+          "दीप. दीपक, प्रदीप.",
+          "हृदय. दिल, जी.",
+          "तलवार. असि, कृपाण.",
+          "पत्थर. पाहन, पाषाण."
+        ]
+      },
+      {
+        "id": "sw-q1",
+        "title": "प्रश्न-उत्तर 1 और 2",
+        "en": "Questions and answers",
+        "lines": [
+          "प्रश्न 1. \"हम हैं जिसके राजा-रानी\" पंक्ति में राजा-रानी किसे और क्यों कहा गया है?",
+          "उत्तर. इस पंक्ति में भारतवासी को राजा-रानी कहा गया है क्योंकि हम ही अपने देश के उत्तराधिकारी और स्वामी हैं।",
+          "प्रश्न 2. 'संसार-संग' चलने से आप क्या समझते हैं? जो व्यक्ति 'संसार-संग' नहीं चलता, संसार उसका क्यों नहीं हो पाता है?",
+          "उत्तर. संसार-संग चलने का मतलब सामाजिक दायित्व निभाना है। संसार-संग न चलने वाले समाज से अलग हो जाते हैं।"
+        ]
+      },
+      {
+        "id": "sw-q2",
+        "title": "प्रश्न-उत्तर 3 और 4",
+        "en": "Questions and answers",
+        "lines": [
+          "प्रश्न 3. \"उस पर है नहीं पसीजा जो, क्या है वह भू का भार नहीं।\" पंक्ति से आप क्या समझते हैं? बताइए।",
+          "उत्तर. जिसके मन में दया नहीं है, वह भूमि के लिए भार है क्योंकि उससे समाज को कोई लाभ नहीं।",
+          "प्रश्न 4. कविता में देश-प्रेम के लिए बहुत सी बातें आई हैं। आप 'देश-प्रेम' से क्या समझते हैं? बताइए।",
+          "उत्तर. देश-प्रेम का मतलब देश से प्यार करना, देश की भलाई के लिए कार्य करना और देश के प्रति आदर रखना है।"
+        ]
+      },
+      {
+        "id": "sw-obj",
+        "title": "वस्तुनिष्ठ एवं मिलान वाले प्रश्न",
+        "en": "Short one-line answers",
+        "lines": [
+          "\"वह हृदय नहीं है पत्थर है\" इस पंक्ति में हृदय के पत्थर होने से क्या तात्पर्य है? उत्तर. कठोरता से।",
+          "निम्नलिखित में से कौन-सा विषय इस कविता का मुख्य भाव है? उत्तर. देश के प्रति प्रेम।",
+          "\"हम हैं जिसके राजा-रानी\" इस पंक्ति में \"हम\" शब्द किसके लिए आया है? उत्तर. देश के समस्त नागरिकों के लिए।",
+          "कविता के अनुसार कौन-सा हृदय पत्थर के समान है? उत्तर. जिसमें देश-प्रेम का भाव नहीं है।"
+        ]
+      },
+      {
+        "id": "sw-milan1",
+        "title": "पंक्तियों का मिलान एवं अर्थ 1 और 2",
+        "en": "Line and its meaning",
+        "lines": [
+          "\"जिसने साहस को छोड़ दिया, वह पहुँच सकेगा पार नहीं।\"",
+          "अर्थ. जिसने किसी कार्य को करने का साहस छोड़ दिया हो, वह किसी लक्ष्य को प्राप्त नहीं कर सकता।",
+          "\"जो जीवित जोश जगा न सका, उस जीवन में कुछ सार नहीं।\"",
+          "अर्थ. जो स्वयं के साथ ही दूसरों को भी प्रेरित और उत्साहित नहीं कर सकते, उनका जीवन निष्फल और अर्थहीन है।"
+        ]
+      },
+      {
+        "id": "sw-milan2",
+        "title": "पंक्तियों का मिलान एवं अर्थ 3 और 4",
+        "en": "Line and its meaning",
+        "lines": [
+          "\"जिस पर ज्ञानी भी मरते हैं, जिस पर है दुनिया दीवानी।\"",
+          "अर्थ. जिस देश की ज्ञान-संपदा से समूचा विश्व प्रभावित है।",
+          "\"सब कुछ है अपने हाथों में, क्या तोप नहीं तलवार नहीं।\"",
+          "अर्थ. जिस प्रकार युद्ध में तोप और तलवार की आवश्यकता होती है, उसी प्रकार मनुष्य की प्रगति के लिए साहस और इच्छाशक्ति की आवश्यकता होती है।"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "gauraiya",
+    "ml": "दो गौरैया",
+    "en": "पाठ 2 · story",
+    "sets": [
+      {
+        "id": "ga-sum",
+        "summary": true,
+        "title": "सारांश",
+        "en": "Chapter summary. Hear this first. It covers the whole story.",
+        "lines": [
+          "पाठ दो. दो गौरैया.",
+          "लेखक के घर में तरह-तरह के जीव-जंतु आते-जाते रहते हैं। इसलिए पिताजी कहते हैं कि घर सराय बना हुआ है।",
+          "कहानी में घर के असली मालिक उन जीव-जंतुओं को कहा गया है जो उस घर में रहते थे।",
+          "दो गौरैया ने घर में पंखे के गोले में अपना घोंसला बनाया, क्योंकि वे उस स्थान को सुरक्षित और उपयुक्त मानती थीं।",
+          "पिताजी ने गौरैयों को भगाने की कोशिश की, लेकिन माँ ने मना किया।",
+          "माँ बार-बार पिताजी की बातों पर मुस्कराती और मज़ाक करती थीं, क्योंकि उन्हें पिताजी के प्रयत्न व्यर्थ लगते थे।",
+          "गौरैयाँ बार-बार लौट आती थीं। इससे सीख मिलती है कि हमें अपने प्रयास को निरंतर जारी रखना चाहिए।"
+        ]
+      },
+      {
+        "id": "ga-shabd",
+        "title": "शब्दार्थ",
+        "en": "Word meanings",
+        "lines": [
+          "मेहमान. अतिथि. Guest.",
+          "डेरा. पड़ाव. Camp.",
+          "झिझकना, ठिठकना. रुकना. To stop.",
+          "सराय. मुसाफ़िरखाना. Inn.",
+          "कसरत. व्यायाम. Exercise.",
+          "गुस्सा. क्रोध. Anger.",
+          "मौजूद. शामिल. Included."
+        ]
+      },
+      {
+        "id": "ga-vilom",
+        "title": "विलोम शब्द",
+        "en": "Opposite words",
+        "lines": [
+          "मेहमान. मेजबान.",
+          "अंदर. बाहर.",
+          "खुला. बंद.",
+          "हँसना. रोना.",
+          "आगे. पीछे.",
+          "कठिन. सरल.",
+          "उतरना. चढ़ना.",
+          "लंबा. चौड़ा.",
+          "गर्मी. सर्दी.",
+          "थोड़ी. बहुत."
+        ]
+      },
+      {
+        "id": "ga-q1",
+        "title": "प्रश्न-उत्तर 1 से 3",
+        "en": "Questions and answers",
+        "lines": [
+          "प्रश्न 1. पिताजी ने कहा कि घर सराय बना हुआ है, क्योंकि?",
+          "उत्तर. घर में विभिन्न जीव-जंतु आते-जाते रहते हैं।",
+          "प्रश्न 2. कहानी में 'घर के असली मालिक' किसे कहा गया है?",
+          "उत्तर. जीव-जंतुओं को जो उस घर में रहते थे।",
+          "प्रश्न 3. गौरैया के प्रति माँ और पिताजी की प्रतिक्रियाएँ कैसी थीं?",
+          "उत्तर. पिताजी ने उन्हें भगाने की कोशिश की, लेकिन माँ ने मना किया।"
+        ]
+      },
+      {
+        "id": "ga-q2",
+        "title": "प्रश्न-उत्तर 4 से 6",
+        "en": "Questions and answers",
+        "lines": [
+          "प्रश्न 4. माँ बार-बार पिताजी की बातों पर मुस्कराती और मज़ाक करती थीं। इससे क्या पता चलता है?",
+          "उत्तर. माँ को पिताजी के प्रयत्न व्यर्थ लगते थे।",
+          "प्रश्न 5. कहानी में गौरैयों के बार-बार लौटने को जीवन के किस पहलू से जोड़ा जा सकता है?",
+          "उत्तर. अपने प्रयास को निरंतर जारी रखना।",
+          "प्रश्न 6. लेखक के घर में चिड़िया ने अपना घोंसला कहाँ बनाया और क्यों?",
+          "उत्तर. लेखक के घर में चिड़िया ने अपना घोंसला पंखे के गोले में बनाया, क्योंकि वे उस स्थान को सुरक्षित और उपयुक्त मानती थीं।"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "ashirvad",
+    "ml": "एक आशीर्वाद",
+    "en": "पाठ 3 · poem",
+    "sets": [
+      {
+        "id": "as-sum",
+        "summary": true,
+        "title": "सारांश",
+        "en": "Chapter summary. Hear this first.",
+        "lines": [
+          "पाठ तीन. एक आशीर्वाद. कवि दुष्यंत कुमार हैं.",
+          "कविता में युवा वर्ग को संबोधित किया गया है.",
+          "कवि आशीर्वाद देते हैं कि तेरे स्वप्न बड़े हों, यानी तुम बहुत-सी उपलब्धियाँ पाओ.",
+          "उँगली जलाने का भाव है, कष्टों से नहीं घबराना.",
+          "अपने पाँवों पर खड़े होने का अर्थ है आत्मनिर्भर होना.",
+          "कविता का संदेश है, अपने सपनों को साकार करके आत्मनिर्भर होकर आगे बढ़ना."
+        ]
+      },
+      {
+        "id": "as-shabd",
+        "title": "शब्दार्थ",
+        "en": "Word meanings",
+        "lines": [
+          "आशीर्वाद. अनुग्रह. Blessing.",
+          "स्वप्न. सपना. Dream.",
+          "भावना. कल्पना. Imagination.",
+          "मचलना. हठ करना. Insist, be stubborn.",
+          "रोशनी. प्रकाश. Light.",
+          "दीया. दीपक. Lamp.",
+          "ऊँगली जलना. कष्ट सहना. To bear hardship.",
+          "अपने पाँवों पर खड़ा होना. आत्मनिर्भर होना. Self-dependent."
+        ]
+      },
+      {
+        "id": "as-vilom",
+        "title": "विलोम शब्द",
+        "en": "Opposite words",
+        "lines": [
+          "अप्राप्य. प्राप्य.",
+          "सच. झूठ."
+        ]
+      },
+      {
+        "id": "as-q1",
+        "title": "उत्तर लिखिए 1 से 3",
+        "en": "Questions and answers",
+        "lines": [
+          "प्रश्न 1. कविता में किसे संबोधित किया गया है?",
+          "उत्तर. युवा वर्ग को।",
+          "प्रश्न 2. \"तेरे स्वप्न बड़े हों\" पंक्ति में 'स्वप्न' से क्या आशय है?",
+          "उत्तर. बहुत-सी उपलब्धियाँ पाना।",
+          "प्रश्न 3. \"ऊँगली जलाएँ\" पंक्ति में 'ऊँगली जलाने' का क्या भाव है?",
+          "उत्तर. कष्टों से नहीं घबराना।"
+        ]
+      },
+      {
+        "id": "as-q2",
+        "title": "उत्तर लिखिए 4 और 5",
+        "en": "Questions and answers",
+        "lines": [
+          "प्रश्न 4. \"अपने पाँवों पर खड़े हों\" पंक्ति से क्या आशय है?",
+          "उत्तर. आत्मनिर्भर होना।",
+          "प्रश्न 5. कविता का संदेश क्या है?",
+          "उत्तर. यह कविता हमें अपने सपनों को साकार करके आत्मनिर्भर होकर आगे बढ़ने का संदेश देती है।"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "kabir",
+    "ml": "कबीर के दोहे",
+    "en": "पाठ 5 · couplets",
+    "sets": [
+      {
+        "id": "kb-sum",
+        "summary": true,
+        "title": "सारांश",
+        "en": "Chapter summary. One line for each couplet.",
+        "lines": [
+          "पाठ पाँच. कबीर के दोहे.",
+          "साँच बराबर तप नहीं. सत्य सबसे बड़ी तपस्या है और झूठ सबसे बड़ा पाप.",
+          "बड़ा हुआ तो क्या हुआ. केवल बड़ा होने से लाभ नहीं, हमें परोपकार करना चाहिए.",
+          "गुरु गोविंद दोऊ खड़े. गुरु की महिमा. गुरु ने ही ईश्वर से परिचित कराया.",
+          "अति का भला न बोलना. जीवन में संतुलन अनिवार्य है.",
+          "ऐसी बानी बोलिए. अहंकार छोड़कर मीठी वाणी में बोलना.",
+          "निंदक नियरे राखिए. निंदकों से हमारा स्वभाव अच्छा होता है.",
+          "साधु ऐसा चाहिए. हमें अच्छे को स्वीकार करना चाहिए और बुरे को छोड़ना चाहिए."
+        ]
+      },
+      {
+        "id": "kb-1",
+        "title": "दोहा 1. साँच बराबर तप नहीं",
+        "en": "Couplet, word meanings, meaning",
+        "lines": [
+          "साँच बराबर तप नहीं, झूठ बराबर पाप।",
+          "जाके हिरदै साँच है, ता हिरदै गुरु आपा॥",
+          "शब्दार्थ. साँच, सत्य. तप, तपस्या. जाके, जिसके. हिरदै, हृदय.",
+          "भावार्थ. सत्य के बराबर कोई तपस्या नहीं है और झूठ के बराबर कोई पाप नहीं है।",
+          "जिसके हृदय में सत्य का निवास है, उसके हृदय में ईश्वर, यानी गुरु, का वास होता है।"
+        ]
+      },
+      {
+        "id": "kb-2",
+        "title": "दोहा 2. बड़ा हुआ तो क्या हुआ",
+        "en": "Couplet, word meanings, meaning",
+        "lines": [
+          "बड़ा हुआ तो क्या हुआ, जैसे पेड़ खजूर।",
+          "पंछी को छाया नहीं, फल लागै अति दूर॥",
+          "शब्दार्थ. पंछी, यात्री या पक्षी. अति, बहुत.",
+          "भावार्थ. खजूर के पेड़ के समान बड़ा होने से कोई लाभ नहीं है, क्योंकि वह न तो यात्रियों को छाया देता है और उसके फल भी बहुत ऊँचाई पर लगते हैं।",
+          "अर्थात केवल बड़ा होने से लाभ नहीं, परोपकारी होना चाहिए।",
+          "तत्व. हमें परोपकार करना चाहिए।"
+        ]
+      },
+      {
+        "id": "kb-3",
+        "title": "दोहा 3. गुरु गोविंद दोऊ खड़े",
+        "en": "Couplet, word meanings, meaning",
+        "lines": [
+          "गुरु गोविंद दोऊ खड़े, काके लागूँ पाँय।",
+          "बलिहारी गुरु आपने, गोविंद दियो बताय॥",
+          "शब्दार्थ. गोविंद, ईश्वर. दोऊ, दोनों. काके, किसके. पाँय, पैर.",
+          "भावार्थ. यदि गुरु और ईश्वर दोनों एक साथ खड़े हों, तो पहले किसके चरण स्पर्श करने चाहिए?",
+          "कबीरदास जी कहते हैं कि मैं पहले गुरु की वंदना करूँगा, क्योंकि गुरु ने ही मुझे ईश्वर से परिचित कराया है।",
+          "तत्व. गुरु की महिमा।"
+        ]
+      },
+      {
+        "id": "kb-4",
+        "title": "दोहा 4. अति का भला न बोलना",
+        "en": "Couplet, word meanings, meaning",
+        "lines": [
+          "अति का भला न बोलना, अति की भली न चुप।",
+          "अति का भला न बरसना, अति की भली न धूप॥",
+          "शब्दार्थ. भला, अच्छा.",
+          "भावार्थ. न तो अत्यधिक बोलना अच्छा होता है और न ही अत्यधिक चुप रहना।",
+          "जिस प्रकार अत्यधिक वर्षा और अत्यधिक धूप दोनों ही नुकसानदायक हैं, उसी प्रकार जीवन में संतुलन आवश्यक है।",
+          "तत्व. जीवन में संतुलन अनिवार्य है।"
+        ]
+      },
+      {
+        "id": "kb-5",
+        "title": "दोहा 5. ऐसी बानी बोलिए",
+        "en": "Couplet, word meanings, meaning",
+        "lines": [
+          "ऐसी बानी बोलिए, मन का आपा खोय।",
+          "औरन को शीतल करै, आपहुँ शीतल होय॥",
+          "शब्दार्थ. बानी, वाणी. आपा, अहंकार. औरन, दूसरों को. शीतल, शीतलता या शांति. आपहुँ, स्वयं.",
+          "भावार्थ. कबीरदास जी कहते हैं कि हमें अपना अहंकार छोड़कर ऐसी मीठी वाणी बोलनी चाहिए, जिससे दूसरों को शांति मिले और हमारा स्वयं का मन भी प्रसन्न व शांत रहे।",
+          "तत्व. अहंकार छोड़कर मीठी वाणी में बोलना।"
+        ]
+      },
+      {
+        "id": "kb-6",
+        "title": "दोहा 6. निंदक नियरे राखिए",
+        "en": "Couplet, word meanings, meaning",
+        "lines": [
+          "निंदक नियरे राखिए, आँगन कुटी छवाय।",
+          "बिन पानी, साबुन बिना, निर्मल करै सुभाय॥",
+          "शब्दार्थ. निंदक, निंदा करने वाला. नियरे, निकट. बिन, बिना. सुभाय, स्वभाव.",
+          "भावार्थ. आलोचकों, यानी निंदा करने वालों, को अपने पास, आँगन में कुटी बनाकर, रखना चाहिए।",
+          "क्योंकि वे बिना साबुन और पानी के हमारे स्वभाव की कमियों को बताकर उसे स्वच्छ कर देते हैं।",
+          "तत्व. निंदकों से हमारा स्वभाव अच्छा होता है।"
+        ]
+      },
+      {
+        "id": "kb-7",
+        "title": "दोहा 7. साधु ऐसा चाहिए",
+        "en": "Couplet, word meanings, meaning",
+        "lines": [
+          "साधु ऐसा चाहिए, जैसा सूप सुभाय।",
+          "सार-सार को गहि रहै, थोथा देइ उडाय॥",
+          "शब्दार्थ. साधु, सज्जन पुरुष. सार-सार, मुख्य तत्त्व. गहि रहै, ग्रहण करना. थोथा, व्यर्थ. देइ उडाय, उड़ा देना.",
+          "भावार्थ. कबीरदास जी कहते हैं कि सज्जन व्यक्ति का स्वभाव सूप, यानी छाज, जैसा होना चाहिए, जो काम की चीज़ों को रख लेता है और व्यर्थ की चीज़ों को उड़ा देता है।",
+          "इसी प्रकार हमें अच्छाइयों को स्वीकार कर बुराइयों को छोड़ना चाहिए।",
+          "तत्व. हमें अच्छे को स्वीकार करना चाहिए और बुरे को छोड़ना चाहिए।"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "writing",
+    "ml": "निबंध एवं पत्र",
+    "en": "Paragraph and letter",
+    "sets": [
+      {
+        "id": "wr-para",
+        "title": "अनुच्छेद. कंप्यूटर, आज की आवश्यकता",
+        "en": "Paragraph",
+        "lines": [
+          "कंप्यूटर विज्ञान की सबसे बड़ी उपलब्धि है।",
+          "कंप्यूटर ऐसा काम कर रहा है जो मनुष्य ने कभी नहीं सोचा था।",
+          "कंप्यूटर का उच्च तकनीकी वाला मस्तिष्क मनुष्य की सोच से भी अधिक तेज़ी से काम करता है।",
+          "आज सभी कार्यालयों में कंप्यूटर का प्रयोग किया जाता है।",
+          "विद्यार्थी अपनी पढ़ाई के लिए व्यक्तिगत रूप से कंप्यूटर का उपयोग करते हैं।",
+          "इसके अलावा सिनेमा देखने और संगीत सुनने के लिए भी कंप्यूटर का उपयोग किया जा सकता है।",
+          "कंप्यूटर का अत्यधिक उपयोग हमारी आँखों के लिए हानिकारक है, इसलिए हमें सोच-समझकर कंप्यूटर का सदुपयोग करना चाहिए।"
+        ]
+      },
+      {
+        "id": "wr-letter1",
+        "title": "औपचारिक पत्र. नई चेक बुक, भाग 1",
+        "en": "Formal letter, beginning",
+        "lines": [
+          "सेवा में,",
+          "शाखा प्रबंधक, भारतीय स्टेट बैंक, राजपुरा रोड, दिल्ली शाखा।",
+          "विषय. चेक बुक खो जाने पर नई चेक बुक प्राप्त करने के संबंध में।",
+          "माननीय महोदय,"
+        ]
+      },
+      {
+        "id": "wr-letter2",
+        "title": "औपचारिक पत्र. नई चेक बुक, भाग 2",
+        "en": "Formal letter, body and ending",
+        "lines": [
+          "मैं वर्ष 2010 से आपके बैंक का एक नियमित ग्राहक हूँ। मेरा बचत खाता संख्या 12345678 है।",
+          "खाते को संचालित करने हेतु मुझे 2 जनवरी 2010 को 9876XXXX54 संख्या वाली चेक बुक दी गई थी।",
+          "दिनांक 12 जुलाई 2012 को बस में यात्रा करते समय मेरी चेक बुक खो गई थी। इस संबंध में मैंने पुलिस स्टेशन में शिकायत दर्ज कराई है।",
+          "अब मुझे नई चेक बुक की अत्यंत आवश्यकता है। अतः आपसे नम्र निवेदन है कि मुझे एक नई चेक बुक जारी करने की कृपा करें।",
+          "धन्यवाद!",
+          "भवदीय, आपका नाम, पता।",
+          "दिनांक, 12-10-2026."
+        ]
+      }
+    ]
+  }
+]
+</script>
+
+<script>
+const lessons = JSON.parse(document.getElementById("lessons").textContent);
+const nav = document.getElementById("nav");
+const main = document.getElementById("main");
+const statusEl = document.getElementById("status");
+const doneKey = "hi8-heard";
+const heard = new Set(JSON.parse(localStorage.getItem(doneKey) || "[]"));
+
+let play = null;
+let slow = true;
+let token = 0;
+const speaker = new Audio();
+let finish = null;
+
+function stopSpeaker() {
+  if (finish) {
+    const cancel = finish;
+    finish = null;
+    speaker.removeEventListener("ended", cancel.onEnd);
+    speaker.removeEventListener("error", cancel.onErr);
+    cancel.stop();
+  }
+  speaker.pause();
+}
+
+function showStatus(text) {
+  statusEl.textContent = text;
+  statusEl.classList.add("show");
+}
+
+function malayalamVoice() {
+  return null;
+}
+
+function stopPlay() {
+  token += 1;
+  stopSpeaker();
+  speechSynthesis.cancel();
+  document.querySelectorAll(".line.on, .set.playing").forEach(el => {
+    el.classList.remove("on", "playing");
+  });
+  document.querySelectorAll("button.play").forEach(btn => { btn.textContent = "Play"; });
+  play = null;
+}
+
+function playUrl(url, mine) {
+  return new Promise((resolve, reject) => {
+    if (token !== mine) {
+      reject(new Error("stopped"));
+      return;
+    }
+    stopSpeaker();
+    if (token !== mine) {
+      reject(new Error("stopped"));
+      return;
+    }
+    let settled = false;
+    const done = (err) => {
+      if (settled) return;
+      settled = true;
+      speaker.removeEventListener("ended", onEnd);
+      speaker.removeEventListener("error", onErr);
+      if (finish && finish.onEnd === onEnd) finish = null;
+      if (err) reject(err);
+      else resolve();
+    };
+    const onEnd = () => done(token === mine ? null : new Error("stopped"));
+    const onErr = () => done(new Error(token === mine ? "audio" : "stopped"));
+    finish = { onEnd, onErr, stop: () => done(new Error("stopped")) };
+    speaker.playbackRate = slow ? 0.86 : 1;
+    speaker.addEventListener("ended", onEnd);
+    speaker.addEventListener("error", onErr);
+    const same = speaker.src && speaker.src.endsWith(url);
+    if (!same) speaker.src = url;
+    else {
+      try { speaker.currentTime = 0; } catch (e) {}
+    }
+    const started = speaker.play();
+    if (started && started.catch) {
+      started.catch(err => {
+        const aborted = err && err.name === "AbortError";
+        done(new Error(aborted || token !== mine ? "stopped" : "audio"));
+      });
+    }
+  });
+}
+
+function speakLine(text, localUrl, mine) {
+  const voice = malayalamVoice();
+  if (voice) {
+    return new Promise((resolve, reject) => {
+      if (token !== mine) {
+        reject(new Error("stopped"));
+        return;
+      }
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = "hi-IN";
+      u.voice = voice;
+      u.rate = slow ? 0.82 : 1;
+      u.onend = () => {
+        if (token === mine) resolve();
+        else reject(new Error("stopped"));
+      };
+      u.onerror = () => reject(new Error(token === mine ? "voice" : "stopped"));
+      speechSynthesis.cancel();
+      speechSynthesis.speak(u);
+    });
+  }
+  const remote = "https://translate.googleapis.com/translate_tts?ie=UTF-8&client=gtx&tl=hi&q="
+    + encodeURIComponent(text);
+  return playUrl(localUrl, mine).catch(err => {
+    if (token !== mine) throw err;
+    return playUrl(remote, mine);
+  });
+}
+
+async function runSet(setId, from, onlyOne) {
+  const card = document.querySelector('[data-set="' + setId + '"]');
+  const items = [...card.querySelectorAll(".line")];
+  const end = onlyOne ? from + 1 : items.length;
+  stopPlay();
+  const mine = token;
+  play = { setId, audio: null };
+  card.classList.add("playing");
+  card.querySelector("button.play").textContent = "Stop";
+  try {
+    for (let i = from; i < end; i++) {
+      if (token !== mine) return;
+      items.forEach(li => li.classList.remove("on"));
+      items[i].classList.add("on");
+      items[i].scrollIntoView({ block: "nearest", behavior: "smooth" });
+      await speakLine(items[i].dataset.say, "voice/" + setId + "-" + i + ".mp3", mine);
+    }
+    if (token !== mine) return;
+    if (!onlyOne && card.querySelector(".again").classList.contains("on")) {
+      runSet(setId, 0, false);
+      return;
+    }
+  } catch (err) {
+    if (token === mine && err && err.message !== "stopped") {
+      showStatus("The sound needs internet. Turn on Wi‑Fi, then press Play again.");
+    }
+  }
+  if (token === mine) stopPlay();
+}
+
+function render(id) {
+  const lesson = lessons.find(l => l.id === id);
+  nav.querySelectorAll("button").forEach(b => b.classList.toggle("on", b.dataset.id === id));
+  main.innerHTML = lesson.sets.map(set => `
+    <section class="set ${set.summary ? "summary" : ""} ${heard.has(set.id) ? "done" : ""}" data-set="${set.id}">
+      <div class="set-head">
+        <div>
+          <h2>${set.title}</h2>
+          <p class="en">${set.en}</p>
+        </div>
+        <div class="controls">
+          <button class="play" type="button">Play</button>
+          <button class="ghost slow ${slow ? "on" : ""}" type="button">Slow</button>
+          <button class="ghost again" type="button">Again</button>
+          <button class="ghost mark" type="button">${heard.has(set.id) ? "Heard" : "Mark heard"}</button>
+        </div>
+      </div>
+      <ul class="lines">
+        ${set.lines.map(line => `<li class="line" data-say="${line.replace(/"/g, "&quot;")}"><button class="mini" type="button" aria-label="Play this line">▶</button><span>${line}</span></li>`).join("")}
+      </ul>
+    </section>
+  `).join("");
+}
+
+nav.innerHTML = lessons.map((l, i) =>
+  `<button type="button" data-id="${l.id}" class="${i === 0 ? "on" : ""}">${l.ml}<small>${l.en}</small></button>`
+).join("");
+
+nav.addEventListener("click", e => {
+  const btn = e.target.closest("button");
+  if (!btn) return;
+  stopPlay();
+  render(btn.dataset.id);
+});
+
+main.addEventListener("click", e => {
+  const card = e.target.closest(".set");
+  if (!card) return;
+  const setId = card.dataset.set;
+  if (e.target.closest("button.play")) {
+    if (play && play.setId === setId) stopPlay();
+    else runSet(setId, 0);
+    return;
+  }
+  if (e.target.closest(".mini")) {
+    const li = e.target.closest(".line");
+    const index = [...card.querySelectorAll(".line")].indexOf(li);
+    runSet(setId, index, true);
+    return;
+  }
+  if (e.target.closest(".again")) {
+    e.target.closest(".again").classList.toggle("on");
+    return;
+  }
+  if (e.target.closest(".slow")) {
+    slow = !slow;
+    document.querySelectorAll(".slow").forEach(b => b.classList.toggle("on", slow));
+    return;
+  }
+  if (e.target.closest(".mark")) {
+    if (heard.has(setId)) heard.delete(setId); else heard.add(setId);
+    localStorage.setItem(doneKey, JSON.stringify([...heard]));
+    card.classList.toggle("done", heard.has(setId));
+    e.target.closest(".mark").textContent = heard.has(setId) ? "Heard" : "Mark heard";
+  }
+});
+
+speechSynthesis.onvoiceschanged = () => {};
+render(lessons[0].id);
+</script>
+</body>
+</html>
