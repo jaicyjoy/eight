@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>എട്ടാം ക്ലാസ് മലയാളം – നാളത്തെ പരീക്ഷ</title>
+<style>
+  :root {
+    --ink: #1c1915;
+    --muted: #5c564c;
+    --paper: #f6f1e7;
+    --card: #fffdf8;
+    --line: #e4d9c8;
+    --green: #1f6b45;
+    --green-d: #145233;
+    --amber: #c56a12;
+    --on: #fff4d6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Malayalam Sangam MN", "Malayalam MN", "Sama Malayalam", "Noto Sans Malayalam", sans-serif;
+    line-height: 1.55;
+  }
+  header {
+    position: sticky; top: 0; z-index: 5;
+    background: #1f6b45;
+    color: #fff;
+    padding: 14px 16px 10px;
+  }
+  header h1 { margin: 0; font-size: 1.25rem; font-weight: 700; }
+  header p { margin: 4px 0 0; font-size: 0.92rem; opacity: 0.95; font-family: Georgia, "Iowan Old Style", serif; }
+  .how {
+    margin: 12px 16px 0;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-family: Georgia, "Iowan Old Style", serif;
+    font-size: 0.95rem;
+    color: var(--muted);
+  }
+  nav {
+    display: flex; gap: 8px;
+    overflow-x: auto;
+    padding: 12px 16px;
+  }
+  nav button {
+    flex: 0 0 auto;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink);
+    border-radius: 999px;
+    padding: 8px 14px;
+    font: inherit;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+  nav button small { display: block; font-family: Georgia, serif; font-size: 0.72rem; color: var(--muted); font-weight: 400; }
+  nav button.on { background: var(--green); color: #fff; border-color: var(--green); }
+  nav button.on small { color: #e7f6ee; }
+  main { padding: 0 16px 48px; max-width: 820px; margin: 0 auto; }
+  .set {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 14px 14px 12px;
+    margin: 0 0 14px;
+  }
+  .set.summary { background: #eef7f1; border-color: var(--green); }
+  .set.playing { border-color: var(--amber); box-shadow: 0 0 0 2px #f3d7b4; }
+  .set.done { background: #f3faf6; }
+  .set-head { display: flex; gap: 10px; align-items: flex-start; justify-content: space-between; }
+  .set h2 { margin: 0; font-size: 1.15rem; }
+  .set .en { margin: 2px 0 0; color: var(--muted); font-family: Georgia, serif; font-size: 0.85rem; }
+  .controls { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  button.play, button.ghost {
+    border: 0;
+    border-radius: 999px;
+    font: inherit;
+    cursor: pointer;
+    padding: 8px 14px;
+  }
+  button.play { background: var(--green); color: #fff; font-weight: 700; min-width: 92px; }
+  button.play:hover { background: var(--green-d); }
+  button.ghost { background: #efe8dc; color: var(--ink); }
+  button.ghost.on { background: #f6e2c4; }
+  .lines { list-style: none; margin: 12px 0 0; padding: 0; }
+  .lines li {
+    display: flex; gap: 8px; align-items: flex-start;
+    padding: 8px 8px;
+    border-radius: 10px;
+    border-top: 1px solid #f0e8dc;
+  }
+  .lines li.on { background: var(--on); }
+  .lines li span { flex: 1; font-size: 1.05rem; }
+  .mini {
+    flex: 0 0 auto;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: #fff;
+    cursor: pointer;
+    font-size: 0.95rem;
+  }
+  .status {
+    display: none;
+    margin: 8px 16px 0;
+    padding: 8px 12px;
+    background: #fff4e8;
+    border: 1px solid #efd0a8;
+    border-radius: 10px;
+    font-family: Georgia, serif;
+    font-size: 0.9rem;
+  }
+  .status.show { display: block; }
+</style>
+</head>
+<body>
+<header>
+  <h1>നാളത്തെ മലയാളം പരീക്ഷ</h1>
+  <p>Class 8 · tap Play on one box at a time</p>
+</header>
+<p class="how">Start with the green box at the top. That is the chapter summary. Hear it a few times, then use the boxes below for meanings and questions. Each box has its own Play. Press “Again” to keep repeating that box. The small speaker on a line reads just that one line.</p>
+<p class="status" id="status"></p>
+<nav id="nav"></nav>
+<main id="main"></main>
+
+<script type="application/json" id="lessons">
+[
+  {
+    "id": "flower",
+    "ml": "പനിനീർപ്പൂവ്",
+    "en": "പാഠം 1 · The rose poem",
+    "sets": [
+      {
+        "id": "flower-sum2",
+        "summary": true,
+        "title": "സംഗ്രഹം",
+        "en": "Chapter summary. Hear this first.",
+        "lines": [
+          "പനിനീർപ്പൂവ് ഉള്ളൂർ എസ്. പരമേശ്വരയ്യരുടെ കവിതയാണ്. അമൃതധാര എന്ന സമാഹാരത്തിൽ നിന്നെടുത്തതാണ്.",
+          "ചെമ്പനീർപ്പൂവ് എന്നാൽ ചുവന്ന പനിനീർപ്പൂവ്.",
+          "പൂവിന്റെ ജീവിതം മോശമാണെന്ന് കവി പറഞ്ഞു.",
+          "പൂവ് ഒരു ഉത്തരവും നൽകിയില്ല. കവിയുടെ തെറ്റ് ചൂണ്ടിക്കാട്ടി.",
+          "അതുകൊണ്ട് കവി പൂവിനോട് മാപ്പ് പറയുന്നു.",
+          "പൂക്കൾ ലോകത്തിന് നറുതേൻ നൽകുന്നു. ഏതൊരു ദുഃഖത്തിലും മനുഷ്യർക്ക് വർദ്ധിച്ച സന്തോഷം നൽകുന്നു.",
+          "കവി പൂക്കളെ ദേവതമാരായി കാണുന്നു. കവി കൂപ്പുകൈ നൽകുന്നത് പൂക്കൾക്കാണ്."
+        ]
+      },
+      {
+        "id": "flower-facts2",
+        "title": "മലയാള ഭാഷയും കവിത്രയങ്ങളും",
+        "en": "Poet groups from his notes",
+        "lines": [
+          "പനിനീർപ്പൂവ്. രചന ഉള്ളൂർ എസ്. പരമേശ്വരയ്യർ.",
+          "മലയാള ഭാഷയുടെ പിതാവ് എഴുത്തച്ഛൻ.",
+          "മലയാള സംസ്കൃത കവികൾ. കുമാരനാശാൻ, ഉള്ളൂർ, വള്ളത്തോൾ, മുഹമ്മദ് ഇഖ്ബാൽ, എൻ. വി. കൃഷ്ണവാരിയർ, കുഞ്ഞുണ്ണിമാഷ്, അനിത തമ്പി.",
+          "പ്രാചീന കവിത്രയം. ചെറുശ്ശേരി, എഴുത്തച്ഛൻ, കുഞ്ചൻ നമ്പ്യാർ.",
+          "ആധുനിക കവിത്രയം. കുമാരനാശാൻ, ഉള്ളൂർ, വള്ളത്തോൾ."
+        ]
+      },
+      {
+        "id": "flower-opinion2",
+        "title": "അഭിപ്രായക്കുറിപ്പ്",
+        "en": "The opinion line",
+        "lines": [
+          "സ്വതേ മനുഷ്യർ സുന്ദരന്മാരാണ്, സുന്ദരികളുമാണ്.",
+          "ഉറൂബ്."
+        ]
+      },
+      {
+        "id": "flower-hard2",
+        "title": "കഠിനപദങ്ങൾ",
+        "en": "Hard words. Hear one, then he says it.",
+        "lines": [
+          "അന്നപൂർണ്ണേശ്വരി.",
+          "ഘ്രാണേന്ദ്രിയം.",
+          "പ്രസൂനം.",
+          "മണ്ഡപം.",
+          "സ്ഫൂരിതം.",
+          "യാഥാർത്ഥ്യം.",
+          "അന്തികത്തിൽ."
+        ]
+      },
+      {
+        "id": "flower-art1",
+        "title": "അർത്ഥം 1 മുതൽ 8 വരെ",
+        "en": "Meanings from his notes, part 1",
+        "lines": [
+          "അന്തികത്തിൽ. അരികിൽ.",
+          "അന്നപൂർണ്ണേശ്വരി. സുഭിക്ഷതയുടെ ദേവി.",
+          "ആതങ്കം. രോഗം, ദുഃഖം, സംശയം.",
+          "ഉദാസീനം. ഒന്നിനോടും പ്രത്യേകിച്ച് താല്പര്യമില്ലാത്ത.",
+          "ഓതി. പറഞ്ഞു.",
+          "ഔദ്ധത്യം. അഹങ്കാരം.",
+          "കല്യാണം. വിവാഹം, മംഗളം.",
+          "ഘ്രാണേന്ദ്രിയം. മൂക്ക്."
+        ]
+      },
+      {
+        "id": "flower-art2",
+        "title": "അർത്ഥം 9 മുതൽ 15 വരെ",
+        "en": "Meanings from his notes, part 2",
+        "lines": [
+          "നന്ദനം. സന്തോഷിപ്പിക്കുന്നത്, നന്ദനവനം.",
+          "പാർത്തു. നോക്കുക, വസിക്കുക.",
+          "പാഴുറ്റ. പാഴായ.",
+          "പ്രസൂനം. പൂമൊട്ട്.",
+          "മാൻപ്. അഴക്.",
+          "വേണി. തലമുടി, മുടിക്കെട്ട്.",
+          "സ്മിതം. സന്തോഷമുള്ള, ശുഭമായ."
+        ]
+      },
+      {
+        "id": "flower-par2",
+        "title": "പര്യായം",
+        "en": "Synonyms from his notes",
+        "lines": [
+          "പൂവ്. പ്രസൂനം, കുസുമം.",
+          "മൂക്ക്. ഘ്രാണേന്ദ്രിയം, നാസിക.",
+          "നന്ദനം. ഉദ്യാനം, ആശ്രമം.",
+          "തലമുടി. വേണി, ചികുരം.",
+          "കൂപ്പുകൈ. അഞ്ജലി, പ്രണാമം.",
+          "കല്യാണം. വിവാഹം, മംഗളം.",
+          "പാണി. ഭുജം, ഹസ്തം.",
+          "അന്നപൂർണ്ണേശ്വരി. അന്നദായിനി, പാർവ്വതീദേവി."
+        ]
+      },
+      {
+        "id": "flower-nana2",
+        "title": "നാനാർത്ഥം",
+        "en": "Words with more than one meaning",
+        "lines": [
+          "പാർക്കുക. കാണുക, താമസിക്കുക.",
+          "കല്യാണം. വിവാഹം, മംഗളം.",
+          "കരം. കൈ, നികുതി.",
+          "പത്രം. ദിനപത്രം, ഇല."
+        ]
+      },
+      {
+        "id": "flower-piri2",
+        "title": "പിരിച്ചെഴുതുക",
+        "en": "Split the joined words",
+        "lines": [
+          "ചെമ്പനീർപ്പൂവ്. ചെം, പനിനീർപ്പൂവ്.",
+          "ചോദിച്ചുപോയിക്കലാൽ. ചോദിച്ചുപോയി, ഇപ്രകാരം.",
+          "ചെറുജീവിതയാത്ര. ചെറു, ജീവിതം, യാത്ര.",
+          "പാട്ടുറ്റ. പാടും, ഉറ്റ.",
+          "തലയാട്ടുക. തല, ആട്ടുക.",
+          "എന്റതിൽ. എന്റെ, അതിൽ.",
+          "മാലിൽത്താൻ. മാലിൽ, താൻ.",
+          "മനസ്സിൻ. മനസ്സ്, ഇൻ."
+        ]
+      },
+      {
+        "id": "flower-q1",
+        "title": "ചോദ്യോത്തരങ്ങൾ 1 മുതൽ 5 വരെ",
+        "en": "Questions and answers from his notes",
+        "lines": [
+          "പനിനീർപ്പൂവ് എന്ന കൃതി ആരുടേതാണ്? ഉത്തരം. ഉള്ളൂർ എസ്. പരമേശ്വരയ്യർ.",
+          "ഏത് സമാഹാരത്തിൽ നിന്നെടുത്ത കവിതയാണ് പനിനീർപ്പൂവ്? ഉത്തരം. അമൃതധാര.",
+          "ഏത് പൂവിനെയാണ് ഉള്ളൂർ തന്റെ കവിതയിൽ വർണ്ണിച്ചിരിക്കുന്നത്? ഉത്തരം. പനിനീർപ്പൂവ്.",
+          "ചെമ്പനീർപ്പൂവിന്റെ അർത്ഥം എന്ത്? ഉത്തരം. ചുവന്ന പനിനീർപ്പൂവ്.",
+          "പറഞ്ഞില്ല എന്ന അർത്ഥത്തിൽ കവിതയിൽ പ്രയോഗിച്ചിരിക്കുന്നത് ഏത് പദമാണ്? ഉത്തരം. ഓതിയില്ല."
+        ]
+      },
+      {
+        "id": "flower-q2",
+        "title": "ചോദ്യോത്തരങ്ങൾ 6 മുതൽ 10 വരെ",
+        "en": "Questions and answers from his notes",
+        "lines": [
+          "ആതങ്കം എന്ന വാക്കിന്റെ അർത്ഥം എന്ത്? ഉത്തരം. സങ്കടം.",
+          "കവിയുടെ ചോദ്യത്തിന് എന്തുത്തരമാണ് പൂവ് നൽകിയത്? ഉത്തരം. ഒരു ഉത്തരവും നൽകിയില്ല. കവിയുടെ തെറ്റ് ചൂണ്ടിക്കാട്ടി.",
+          "ആരുടെ ജീവിതം മോശമാണെന്നാണ് പറഞ്ഞത്? ഉത്തരം. പൂവിന്റെ.",
+          "പൂതമാം നന്ദനം എന്നാൽ എന്താണ്? ഉത്തരം. ഐശ്വര്യമുള്ള പൂന്തോട്ടം.",
+          "തെന്നലിൽ ആടുന്നത് ആരുടെ പാട്ടു കേട്ടാണ്? ഉത്തരം. പാടുന്ന വണ്ടുകൾക്കൊപ്പം തെന്നലിലാടുന്ന പൂക്കളാണ്."
+        ]
+      },
+      {
+        "id": "flower-q3",
+        "title": "ചോദ്യോത്തരങ്ങൾ 11 മുതൽ 15 വരെ",
+        "en": "Questions and answers from his notes",
+        "lines": [
+          "ഘ്രാണേന്ദ്രിയം മാറ്റി എഴുതുക. ഉത്തരം. ഘ്രാണത്തിനുള്ള ഇന്ദ്രിയം. മൂക്ക്.",
+          "പൂക്കൾ എന്താണ് ലോകത്തിന് നൽകുന്നത്? ഉത്തരം. നറുതേൻ.",
+          "പൂക്കളെ കവി എങ്ങനെയാണ് സങ്കല്പിക്കുന്നത്? ഉത്തരം. വിണ്ണിലെ ദൈവപദങ്ങൾ.",
+          "ധാമം എന്ന വാക്കിന്റെ അർത്ഥം എന്ത്? ഉത്തരം. ഇരിപ്പിടം.",
+          "തനിക്ക് മാപ്പുനൽകാൻ കവി ആരോടാണ് പറയുന്നത്? എന്തുകൊണ്ട്? ഉത്തരം. പൂവിനോട്. പൂവിന്റെ ജീവിതം മോശമാണെന്ന് പറഞ്ഞതിനാണ് കവി മാപ്പുപറയുന്നത്."
+        ]
+      },
+      {
+        "id": "flower-q4",
+        "title": "ചോദ്യോത്തരങ്ങൾ 16 മുതൽ 20 വരെ",
+        "en": "Questions and answers from his notes",
+        "lines": [
+          "പാരിതിൽ, വീർക്കുകിൽ. അർത്ഥമെന്ത്? ഉത്തരം. പാരിതിൽ, ഈ ഭൂമിയിൽ. വീർക്കുകിൽ, കാറ്റടിക്കുകയാണെങ്കിൽ.",
+          "പൂക്കൾ മർത്ത്യർക്ക് നൽകുന്നത് എന്ത്? ഉത്തരം. ഏതൊരു ദുഃഖത്തിലും മനുഷ്യർക്ക് വർദ്ധിച്ച സന്തോഷം പൂക്കൾ നൽകാറുണ്ട്.",
+          "സ്ഫീതമാം ആനന്ദം. അർത്ഥമെന്ത്? ഉത്തരം. വർദ്ധിച്ച സന്തോഷം.",
+          "പൂക്കളെ ആരായിട്ടാണ് കവി കാണുന്നത്? ഉത്തരം. ദേവതമാർ.",
+          "നിങ്ങൾക്കെന്റെ കൂപ്പുകൈ. ആർക്കാണ് കവി കൂപ്പുകൈ നൽകുന്നത്? ഉത്തരം. പൂക്കൾക്ക്."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "feather",
+    "ml": "താളുകൾക്കിടയിലൊരു മയിൽപ്പീലി",
+    "en": "പാഠം 2 · The peacock feather",
+    "sets": [
+      {
+        "id": "feather-sum2",
+        "summary": true,
+        "title": "സംഗ്രഹം",
+        "en": "Chapter summary. Hear this first.",
+        "lines": [
+          "താളുകൾക്കിടയിലൊരു മയിൽപ്പീലി. രചന പ്രിയ എ. എസ്.",
+          "അനുതാരയുടെ സ്നേഹിതൻ നീലകണ്ഠൻ ആണ്.",
+          "എത്ര ചികിത്സിച്ചാലും വിട്ടുപിരിയാത്ത അസുഖം കാരണം അനുതാരയ്ക്ക് ബാല്യം ആസ്വദിക്കാൻ കഴിഞ്ഞില്ല.",
+          "അതുകൊണ്ട് ബാല്യത്തിന് നഷ്ടബോധങ്ങളുടെ നിരയിൽ എന്നും ഒന്നാം സ്ഥാനമാണ്.",
+          "ചില ഉടുപ്പുകൾ, രണ്ടോ മൂന്നോ പിണക്കങ്ങൾ, പിന്നെ നീലകണ്ഠൻ. ഇത്രയുമാണ് അവളുടെ ഓർമ്മയിൽ.",
+          "നീലകണ്ഠന് ഒരു പനി വന്ന് കാഴ്ച നഷ്ടപ്പെട്ടു.",
+          "ചികിത്സയ്ക്കായി വീട് വിൽക്കുന്നതുകൊണ്ട് അവർ അമ്മാവന്റെ അടുത്തേക്ക് പോകുന്നു."
+        ]
+      },
+      {
+        "id": "feather-author",
+        "title": "ആരാണ് എഴുതിയത്",
+        "en": "Who wrote this work",
+        "lines": [
+          "താളുകൾക്കിടയിലൊരു മയിൽപ്പീലി എന്ന കൃതി എഴുതിയത് പ്രിയ എ. എസ്. ആണ്."
+        ]
+      },
+      {
+        "id": "feather-friend",
+        "title": "അനുതാരയുടെ സ്നേഹിതൻ",
+        "en": "Who Anuthara’s friend is",
+        "lines": [
+          "അനുതാരയുടെ സ്നേഹിതൻ നീലകണ്ഠൻ ആണ്."
+        ]
+      },
+      {
+        "id": "feather-childhood",
+        "title": "ബാല്യത്തിന്റെ നഷ്ടബോധം",
+        "en": "Why childhood is first among her losses, and who says it",
+        "lines": [
+          "ബാല്യത്തിന് നഷ്ടബോധങ്ങളുടെ നിരയിൽ എന്നും ഒന്നാം സ്ഥാനമാണ്.",
+          "ഇത് പറയുന്നത് അനുതാരയാണ്.",
+          "എത്ര ചികിത്സിച്ചാലും വിട്ടുപിരിയാത്ത അസുഖം ഉള്ളതുകൊണ്ട് അവളുടെ ബാല്യം ആസ്വദിക്കാൻ കഴിഞ്ഞിരുന്നില്ല.",
+          "വേദനകളുടെ ലോകത്തായിരുന്നു അവളുടെ ജീവിതം."
+        ]
+      },
+      {
+        "id": "feather-memory",
+        "title": "ബാല്യകാല ഓർമ്മകൾ",
+        "en": "What Anuthara remembers from childhood",
+        "lines": [
+          "എന്റെയും മറ്റു ചില കുട്ടികളുടെയും ചില ഉടുപ്പുകൾ.",
+          "രണ്ടോ മൂന്നോ പിണക്കങ്ങൾ.",
+          "പിന്നെ നീലകണ്ഠൻ.",
+          "ഇത്രയുമാണ് അനുതാരയുടെ ഓർമ്മയിൽ ഉള്ളത്."
+        ]
+      },
+      {
+        "id": "feather-neelan",
+        "title": "നീലകണ്ഠന് സംഭവിച്ചത്",
+        "en": "What happened to Neelakantan",
+        "lines": [
+          "നീലകണ്ഠന് ഒരു പനി വന്നു.",
+          "ആ പനി കാരണം അവന്റെ കാഴ്ച നഷ്ടപ്പെട്ടു."
+        ]
+      },
+      {
+        "id": "feather-go",
+        "title": "എവിടേക്ക് പോകുന്നു, എന്തിന്",
+        "en": "Where Neelakantan is going, and why",
+        "lines": [
+          "ചികിത്സയ്ക്കായി വീട് വിൽക്കാൻ പോകുകയാണ്.",
+          "അതുകൊണ്ട് അമ്മാവന്റെ അടുത്തേക്കാണ് അവർ പോകുന്നത്."
+        ]
+      },
+      {
+        "id": "feather-hard2",
+        "title": "കഠിനപദങ്ങൾ",
+        "en": "Hard words. Hear one, then he says it.",
+        "lines": [
+          "നീലകണ്ഠൻ.",
+          "മയിൽപ്പീലി.",
+          "പാഠപുസ്തകം.",
+          "നഷ്ടബോധം.",
+          "കളിമേഘങ്ങൾ.",
+          "അപരിചിതത്വം.",
+          "തലയുരി.",
+          "നുഴഞ്ഞുകയറി.",
+          "ദിവ്യവസ്തു.",
+          "പ്രിയപ്പെട്ടതാക്കി."
+        ]
+      },
+      {
+        "id": "feather-art2",
+        "title": "അർത്ഥം",
+        "en": "Meanings from his notes",
+        "lines": [
+          "ഈറനായ. നനഞ്ഞ.",
+          "നെടുക്കൻ. നീളമുള്ള.",
+          "സാന്ത്വനം. സമാധാനപ്പെടുത്തൽ.",
+          "അപരിചിതത്വം. പരിചയമില്ലാത്ത.",
+          "നിശ്ചലം. ചലിക്കാത്ത.",
+          "ഗൗനിച്ചില്ല. ശ്രദ്ധിച്ചില്ല.",
+          "വികൃതം. വിരൂപം.",
+          "സർവ്വതും. എല്ലാം.",
+          "ദീനം. രോഗം.",
+          "പ്രകാശമാനം. പ്രകാശം നിറഞ്ഞ."
+        ]
+      },
+      {
+        "id": "feather-par2",
+        "title": "പര്യായം",
+        "en": "Synonyms from his notes",
+        "lines": [
+          "നീലകണ്ഠൻ. മഹാദേവൻ, ശിവൻ.",
+          "ഓർമ്മ. സ്മൃതി, സ്മരണം.",
+          "അറിവ്. ജ്ഞാനം, വിജ്ഞാനം.",
+          "സ്വപ്നം. കിനാവ്, മനോരാജ്യം.",
+          "പാഠം. അധ്യായം, പാഠഭാഗം."
+        ]
+      },
+      {
+        "id": "feather-nana2",
+        "title": "നാനാർത്ഥം",
+        "en": "A word with more than one meaning",
+        "lines": [
+          "വരിശം. വർഷം, അവസ്ഥ."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "film",
+    "ml": "തിങ്കളാഴ്ച നല്ല ദിവസം",
+    "en": "പാഠം 3 · the film",
+    "sets": [
+      {
+        "id": "film-sum",
+        "summary": true,
+        "title": "സംഗ്രഹം",
+        "en": "Chapter summary. Hear this first. It covers the story, so he can answer questions from it.",
+        "lines": [
+          "തിങ്കളാഴ്ച നല്ല ദിവസം പി. പത്മരാജൻ രചിച്ച് സംവിധാനം ചെയ്ത ചലച്ചിത്രമാണ്.",
+          "1985 ൽ എം. മണി നിർമ്മിച്ച് പുറത്തിറക്കി.",
+          "മികച്ച മലയാള ചലച്ചിത്രത്തിനുള്ള ദേശീയ പുരസ്കാരം ഈ ചിത്രം നേടി.",
+          "മമ്മൂട്ടി, കവിയൂർ പൊന്നമ്മ, കരമന ജനാർദ്ദനൻ നായർ, ശ്രീവിദ്യ എന്നിവരാണ് പ്രധാന കഥാപാത്രങ്ങൾ.",
+          "അമ്മയുടെ പിറന്നാളിന് നാട്ടിലെ വീട്ടിൽ മക്കൾ ഒത്തുകൂടുന്ന കഥയാണ്.",
+          "പ്രവാസി മലയാളിയുടെ ജീവിതം ഈ ചിത്രം കാണിക്കുന്നു.",
+          "വീട് വിൽക്കാനും അമ്മയെ ആശ്രമത്തിലേക്ക് മാറ്റാനും മക്കൾ രഹസ്യമായി പദ്ധതിയിട്ടു.",
+          "അത് അമ്മയ്ക്ക് വഞ്ചനയായി തോന്നി. മക്കൾ അമ്മയെ ഒരു തടസ്സമായി കണ്ടു.",
+          "നിങ്ങളാരും എന്നെക്കാണാൻ വരരുത് എന്നാണ് അമ്മ പറഞ്ഞത്.",
+          "ആത്മാഭിമാനം സംരക്ഷിക്കാനുള്ള അവസാന മറുപടിയായിരുന്നു അത്."
+        ]
+      },
+      {
+        "id": "film-about",
+        "title": "പാഠം ഒറ്റനോട്ടത്തിൽ",
+        "en": "What this lesson is about",
+        "lines": [
+          "പി. പത്മരാജൻ രചനയും സംവിധാനവും നിർവഹിച്ച ചലച്ചിത്രമാണ് തിങ്കളാഴ്ച നല്ല ദിവസം.",
+          "1985 ൽ എം. മണി നിർമ്മിച്ച് പുറത്തിറങ്ങി.",
+          "അമ്മയുടെ പിറന്നാളിന് നാട്ടിലെ വീട്ടിൽ ഒത്തുകൂടുന്ന മക്കളുടെ കഥയാണ്.",
+          "പ്രവാസി മലയാളിയുടെ ജീവിതത്തിന്റെ നേർചിത്രമാണ് ഈ ചിത്രം.",
+          "മമ്മൂട്ടി, കവിയൂർ പൊന്നമ്മ, കരമന ജനാർദ്ദനൻ നായർ, ശ്രീവിദ്യ എന്നിവരാണ് പ്രധാന കഥാപാത്രങ്ങൾ.",
+          "ആ വർഷത്തെ മികച്ച മലയാള ചലച്ചിത്രത്തിനുള്ള ദേശീയ പുരസ്കാരം ഈ ചിത്രം നേടി."
+        ]
+      },
+      {
+        "id": "film-amma",
+        "title": "അമ്മയുടെ നിലപാട്",
+        "en": "Why the mother said, do not come to see me",
+        "lines": [
+          "നിങ്ങളാരും എന്നെക്കാണാനായിട്ട് അങ്ങോട്ട് വരരുത് എന്നതാണ് അമ്മയുടെ നിലപാട്.",
+          "മക്കളുടെ പ്രവൃത്തികൾ ഏൽപ്പിച്ച ആഴത്തിലുള്ള മുറിവിൽ നിന്നാണ് ഈ നിലപാട് ഉടലെടുത്തത്.",
+          "വീട് വിൽക്കാനും തന്നെ ഒരു ആശ്രമത്തിലേക്ക് മാറ്റാനുമുള്ള പദ്ധതി മക്കൾ രഹസ്യമാക്കി വെച്ചു.",
+          "അത് അമ്മയ്ക്ക് ഒരു വഞ്ചനയായി അനുഭവപ്പെട്ടു.",
+          "മക്കൾ അമ്മയെ തങ്ങളുടെ സൗകര്യങ്ങൾക്ക് ഒരു തടസ്സമായി കണ്ടു.",
+          "അമ്മയുടെ ജീവിതത്തെയും അധ്വാനത്തെയും ഒരു ബുദ്ധിമുട്ടായി അവർ ചിത്രീകരിച്ചു.",
+          "ആത്മാഭിമാനം സംരക്ഷിക്കാനുള്ള അവസാനത്തെ പ്രതികരണമായിരുന്നു ആ വാക്കുകൾ."
+        ]
+      },
+      {
+        "id": "film-artham",
+        "title": "അർത്ഥം",
+        "en": "Word meanings. Hear one line, then he repeats it.",
+        "lines": [
+          "അഭേദ്യം എന്നാൽ ഭേദിക്കാനാവാത്തത്.",
+          "സമ്പന്നൻ എന്നാൽ ധനവാൻ.",
+          "ഔന്നത്യം എന്നാൽ ഉയർച്ച.",
+          "ലോകവിശ്രുതൻ എന്നാൽ ലോകം മുഴുവൻ അറിയപ്പെടുന്നവൻ."
+        ]
+      },
+      {
+        "id": "film-paryayam",
+        "title": "പര്യായം",
+        "en": "Words with the same meaning",
+        "lines": [
+          "സ്വരത്തിന്റെ പര്യായം നാദം, ധ്വനി.",
+          "സാഗരത്തിന്റെ പര്യായം സമുദ്രം, ജലധി.",
+          "ലോകത്തിന്റെ പര്യായം ജഗം, വിശ്വം."
+        ]
+      },
+      {
+        "id": "film-nana",
+        "title": "നാനാർത്ഥം",
+        "en": "One word, more than one meaning",
+        "lines": [
+          "സ്വരം എന്നാൽ ശബ്ദം. സംഗീതത്തിലെ സ്വരം കൂടിയാണ്.",
+          "സാഗരം എന്നാൽ സമുദ്രം. ഒരു തരം മാൻ കൂടിയാണ്.",
+          "ലോകം എന്നാൽ ജനം. ഭൂമി കൂടിയാണ്."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "kali",
+    "ml": "കളിവിളക്കിൻ തിരിനാളം",
+    "en": "പാഠം 4 · Kathakali / ചോറും പാട്ടും",
+    "sets": [
+      {
+        "id": "kali-sum2",
+        "summary": true,
+        "title": "സംഗ്രഹം",
+        "en": "Chapter summary. Hear this first.",
+        "lines": [
+          "പാഠം നാല്. കളിവിളക്കിൻ തിരിനാളം. ചോറും പാട്ടും.",
+          "ലേഖകനെ ഏറ്റവും ആകർഷിച്ചത് തോരണയുദ്ധം എന്ന കഥയിലെ ഹനുമാന്റെ വേഷമാണ്.",
+          "അണിയറയിൽ അനക്കമില്ലാതിരുന്ന ഹനുമാൻ പെട്ടെന്ന് എഴുന്നേറ്റ് മടമ്പിടിച്ച് നാലു ചവിട്ടു ചവിട്ടി.",
+          "തങ്ങളെ ആക്രമിക്കാൻ വരികയാണെന്ന് തെറ്റിദ്ധരിച്ച് കുട്ടികൾ പേടിച്ചോടി.",
+          "പുറത്തേക്കുള്ള വഴി അറിയാതെ അവർ ഒരു ചൊട്ടക്കുഴിയിൽ കൂട്ടിയിട്ടു വീണു.",
+          "അരങ്ങ് കാണികൾ കാണുന്ന പ്രധാന വേദി. അണിയറ വേഷമിടുന്ന, കാണികൾ കാണാത്ത സ്ഥലം.",
+          "ചോറു ചോദിച്ചുവന്നത് വൃദ്ധനെന്നു തോന്നുന്ന, ആകെ അവശനായ ഒരു മധ്യവയസ്കനാണ്."
+        ]
+      },
+      {
+        "id": "kali-art1",
+        "title": "അർത്ഥം 1 മുതൽ 8 വരെ",
+        "en": "Meanings from his notes, part 1",
+        "lines": [
+          "അവഗാഹം. തീവ്രമായി.",
+          "ആരോഹണാവരോഹണം. ഉയർച്ചയും താഴ്ചയും.",
+          "ഉച്ചസ്ഥായി. ഉയർന്ന സ്ഥായി.",
+          "ഉയർന്ന. സംഗീത ക്രമം.",
+          "കളിയിഷ്ടം. വിനോദം.",
+          "ദ്വന്ദ്വയുദ്ധം. രണ്ടു പേർ തമ്മിലുള്ള യുദ്ധം.",
+          "നിഷിദ്ധം. ഒഴിവാക്കേണ്ടത്.",
+          "പരോക്ഷം. മറവ്, മറഞ്ഞിരിക്കുന്നത്."
+        ]
+      },
+      {
+        "id": "kali-art2",
+        "title": "അർത്ഥം 9 മുതൽ 15 വരെ",
+        "en": "Meanings from his notes, part 2",
+        "lines": [
+          "പ്രചോദകം. പ്രോത്സാഹിപ്പിക്കുന്നത്.",
+          "മടമ്പിടിച്ച്. ഉറപ്പിച്ചു നിർത്തി അമർത്തി ചവിട്ടി.",
+          "യവനനാടകവേദി. ഗ്രീക്ക് നാടകവേദി.",
+          "രംഗസ്ഥലം, രംഗപീഠം. രംഗത്ത്.",
+          "വാതായനം. വാതിൽ.",
+          "വിശിഷ്യാ. പ്രത്യേകിച്ച്.",
+          "ഹൃദാകർഷിച്ചത്. കൂടുതൽ ആകർഷിച്ചത്."
+        ]
+      },
+      {
+        "id": "kali-par2",
+        "title": "പര്യായം",
+        "en": "Synonyms from his notes",
+        "lines": [
+          "വിസ്മയം. അത്ഭുതം, ആശ്ചര്യം.",
+          "കല. വിദ്യ, നൈപുണ്യം.",
+          "ഹനുമാൻ. മാരുതി, വായുപുത്രൻ.",
+          "അണിയറ. പിന്നാമ്പുറം, പശ്ചാത്തലം.",
+          "മുദ്ര. ചിഹ്നം, അടയാളം.",
+          "കീർത്തനം. ഭജന, സ്തോത്രം.",
+          "സമ്പ്രദായം. ആചാരം, പരമ്പരാഗതമായ രീതി."
+        ]
+      },
+      {
+        "id": "kali-nana2",
+        "title": "നാനാർത്ഥം",
+        "en": "One word, two meanings",
+        "lines": [
+          "മുദ്ര. ചിഹ്നം, കൈമുദ്ര."
+        ]
+      },
+      {
+        "id": "kali-q1",
+        "title": "ഹൃദാകർഷിച്ച വേഷം",
+        "en": "Question 1",
+        "lines": [
+          "ലേഖകനെ ഹൃദാകർഷിച്ച കഥകളി വേഷം ഏതാണ്? ഏത് കഥയിലേതാണ് ആ വേഷം?",
+          "ഉത്തരം. ലേഖകനെ ഏറ്റവും ആകർഷിച്ചത് ഹനുമാന്റെ വേഷമാണ്.",
+          "അത് തോരണയുദ്ധം എന്ന കഥയിലെ ഹനുമാനായിരുന്നു."
+        ]
+      },
+      {
+        "id": "kali-q2",
+        "title": "കുട്ടികൾ പേടിച്ചത്",
+        "en": "Question 2",
+        "lines": [
+          "അണിയറയിൽ വെച്ച് കുട്ടികൾ പേടിച്ചു പോയത് എന്തുകൊണ്ടാണ്?",
+          "ഉത്തരം. അണിയറയിൽ വെച്ച് അനക്കമില്ലാതിരുന്ന ഹനുമാൻ വേഷം അദൃശ്യശരീരകോപച്ചെണ്ട് എന്നറിയപ്പെടുന്ന കോപത്തിന്റെ അടയാളമായി പെട്ടെന്ന് എഴുന്നേറ്റു.",
+          "മടമ്പിടിച്ച് നാലു ചവിട്ടു ചവിട്ടിയപ്പോൾ വേഷം തങ്ങളെ ആക്രമിക്കാൻ വരികയാണെന്ന് തെറ്റിദ്ധരിച്ചാണ് കുട്ടികൾ പേടിച്ചു പോയത്.",
+          "അരങ്ങിലേക്ക് പോകുന്നതിനു മുൻപുള്ള ഒരു മുന്നൊരുക്കമായിരുന്നു അത്."
+        ]
+      },
+      {
+        "id": "kali-q3",
+        "title": "കുട്ടികൾക്ക് സംഭവിച്ച അപകടം",
+        "en": "Question 3",
+        "lines": [
+          "അണിയറയുടെ വാതിൽ കടന്ന് ഓടിയപ്പോൾ കുട്ടികൾക്ക് സംഭവിച്ച അപകടം എന്താണ്?",
+          "ഉത്തരം. അണിയറയുടെ വാതിൽ കടന്നാൽ ഒരു വശത്തേക്ക് തിരിഞ്ഞു വേണം പുറത്തിറങ്ങാൻ.",
+          "അതറിയാതെ ഭയന്ന് കുട്ടികൾ അവിടുത്തെ ഒരു ചൊട്ടക്കുഴിയിൽ കൂട്ടിയിട്ടു വീണു."
+        ]
+      },
+      {
+        "id": "kali-q4",
+        "title": "വ്യത്യാസമെഴുതുക. അരങ്ങ്, അണിയറ",
+        "en": "Question 4",
+        "lines": [
+          "അരങ്ങ്. കാണികൾക്ക് കഥകളി കാണാൻ സാധിക്കുന്ന, കളിവിളക്ക് സ്ഥാപിച്ചിട്ടുള്ള പ്രധാന വേദിയാണ് അരങ്ങ്.",
+          "അണിയറ. വേഷക്കാർ വേഷം ഇടുന്നതും തയ്യാറെടുക്കുന്നതും വിശ്രമിക്കുന്നതുമായ സ്ഥലമാണ് അണിയറ.",
+          "ഇത് കാണികളുടെ കാഴ്ചയിൽ നിന്നും മറഞ്ഞിരിക്കുന്നു."
+        ]
+      },
+      {
+        "id": "kali-q5",
+        "title": "ചോറു ചോദിച്ചുവന്ന മധ്യവയസ്കൻ",
+        "en": "Question 5",
+        "lines": [
+          "ചോറു ചോദിച്ചുവന്ന മധ്യവയസ്കന്റെ രൂപം വർണ്ണിക്കുക.",
+          "ഉത്തരം. വൃദ്ധനെന്നു തോന്നുന്ന ഒരു മധ്യവയസ്കൻ.",
+          "മൂപ്പും ചുളിഞ്ഞ മുണ്ടും ഷർട്ടും ആണ് വേഷം.",
+          "ഉലഞ്ഞ ചെമ്പൻമുടിയും മയക്കമാർന്നു ക്ഷീണിച്ച കണ്ണുകളും. ആൾ ആകെ അവശൻ."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "poem",
+    "ml": "നിങ്ങളോർക്കുക",
+    "en": "പാഠം 5 · the poem",
+    "sets": [
+      {
+        "id": "poem-sum",
+        "summary": true,
+        "title": "സംഗ്രഹം",
+        "en": "Chapter summary. Hear this first.",
+        "lines": [
+          "നിങ്ങളോർക്കുക കടമ്മനിട്ട രാമകൃഷ്ണന്റെ കവിതയാണ്.",
+          "കുറത്തി സമൂഹത്തോട് കവി ചോദ്യങ്ങൾ ചോദിക്കുന്നു.",
+          "മേലാളന്മാർക്കുവേണ്ടി അധ്വാനിച്ച കാടിന്റെ മക്കൾക്ക് ആഹാരവും വസ്ത്രവും വീടും ഇല്ല.",
+          "കുറത്തി അടിസ്ഥാന വർഗത്തിന്റെ പ്രതിനിധിയാണ്.",
+          "മരം മുറിച്ച് പുല്ല് മേഞ്ഞ് തട്ടൊരുക്കുന്നത് വീട് പണിയാനുള്ള ഒരുക്കമാണ്.",
+          "കാള കെട്ടി തിറയെടുത്ത വരി കതിരുകാള നൃത്തത്തെക്കുറിച്ചാണ്.",
+          "മെലിഞ്ഞ പൈതങ്ങൾക്ക് അന്നമോ നാണം മറയ്ക്കാൻ വസ്ത്രമോ ഇല്ല.",
+          "ശീർഷകം സമൂഹത്തോട് അവരുടെ അധ്വാനവും ദുരിതവും ഓർക്കാൻ ആവശ്യപ്പെടുന്നു."
+        ]
+      },
+      {
+        "id": "poem-about",
+        "title": "കവിത ഒറ്റനോട്ടത്തിൽ",
+        "en": "What the poem says. Say this in your own words after he hears it.",
+        "lines": [
+          "നിങ്ങളോർക്കുക എന്ന കവിത കടമ്മനിട്ട രാമകൃഷ്ണന്റേതാണ്.",
+          "കുറത്തി സമൂഹത്തോട് ചോദ്യങ്ങൾ ചോദിക്കുകയാണ്.",
+          "മേലാളന്മാർക്കുവേണ്ടി അധ്വാനിച്ച കാടിന്റെ മക്കൾക്ക് ആഹാരവും വസ്ത്രവും വീടും ഇല്ല.",
+          "ആ ചൂഷണത്തോടുള്ള പ്രതിഷേധമാണ് ഈ കവിത."
+        ]
+      },
+      {
+        "id": "poem-artham",
+        "title": "അർത്ഥം",
+        "en": "Word meanings",
+        "lines": [
+          "ചോല എന്നാൽ കാട്ടരുവി.",
+          "ചിമ്മാതെ എന്നാൽ അടയ്ക്കാതെ.",
+          "കൂര എന്നാൽ ചെറിയ വീട്."
+        ]
+      },
+      {
+        "id": "poem-paryayam",
+        "title": "പര്യായം",
+        "en": "Words with the same meaning",
+        "lines": [
+          "നദി എന്നാൽ തടിനി, പുഴ, ആറ്.",
+          "കടൽ എന്നാൽ അബ്ധി, സാഗരം.",
+          "കനകം എന്നാൽ സ്വർണ്ണം, കാഞ്ചനം.",
+          "കാട് എന്നാൽ അടവി, വിപിനം.",
+          "തേൻ എന്നാൽ മധു, മടു."
+        ]
+      },
+      {
+        "id": "poem-vigraham",
+        "title": "വിഗ്രഹിക്കുക",
+        "en": "Split the compound and say the meaning",
+        "lines": [
+          "കാട്ടുവള്ളിക്കിഴങ്ങ് എന്നാൽ കാട്ടുവള്ളിയുടെ കിഴങ്ങ്.",
+          "കാട്ടുചോലത്തെളിനീര് എന്നാൽ കാട്ടുചോലയിലെ തെളിനീര്."
+        ]
+      },
+      {
+        "id": "poem-piri",
+        "title": "പിരിച്ചെഴുതുക",
+        "en": "Split the joined words",
+        "lines": [
+          "കാടരിച്ചു എന്നാൽ കാട് കൂടി അരിച്ചു.",
+          "മാമരച്ചോട്ടിൽ എന്നാൽ മാമരം കൂടി ചോട്ടിൽ.",
+          "പുലിയുടെ എന്നാൽ പുലി കൂടി ഉടെ."
+        ]
+      },
+      {
+        "id": "poem-house",
+        "title": "വീട് പണിയുന്ന ഒരുക്കം",
+        "en": "What the lines about cutting wood describe",
+        "lines": [
+          "മരം മുറിച്ച് പുല്ല് മേഞ്ഞ് തട്ടൊരുക്കി തളമൊരുക്കി.",
+          "ഇത് വീട് പണിയുന്നതിന്റെ ഒരുക്കമാണ്."
+        ]
+      },
+      {
+        "id": "poem-dance",
+        "title": "കതിരുകാള നൃത്തം",
+        "en": "Which art form the poem points to",
+        "lines": [
+          "കാള കെട്ടി കാട്ടുദൈവക്കൂത്തരങ്ങിൽ തിറയെടുത്തില്ലേ.",
+          "ഈ വരി കതിരുകാള നൃത്തത്തെക്കുറിച്ചാണ്."
+        ]
+      },
+      {
+        "id": "poem-children",
+        "title": "മെലിഞ്ഞ പൈതങ്ങൾ",
+        "en": "The note about the hungry children. Hear it three times.",
+        "lines": [
+          "എവിടെ ഞങ്ങളുടെ കരിപുരണ്ടു മെലിഞ്ഞ പൈതങ്ങൾ?",
+          "അവർക്ക് അന്നമെവിടെ? നാണമെവിടെ?",
+          "കുറത്തി അടിസ്ഥാന വർഗത്തിന്റെ പ്രതിനിധിയാണ്.",
+          "മേലാളന്മാർ അവരുടെതെല്ലാം ചൂഷണം ചെയ്തു.",
+          "ഒരു നേരത്തെ അന്നമോ, നാണം മറയ്ക്കാൻ വസ്ത്രമോ ഇല്ല.",
+          "ആ ദുരിതമാണ് ഈ വരികളിൽ പ്രതിഫലിക്കുന്നത്."
+        ]
+      },
+      {
+        "id": "poem-title",
+        "title": "ശീർഷകത്തിന്റെ ഔചിത്യം",
+        "en": "Why the title Remember fits the poem",
+        "lines": [
+          "നിങ്ങളോർക്കുക എന്നത് കവി സമൂഹത്തോട് ചോദിക്കുന്ന ചോദ്യമാണ്.",
+          "നമ്മുടെ സുഖത്തിന് പിന്നിൽ അധ്വാനിക്കുന്നവരുടെ വിയർപ്പുണ്ട്.",
+          "കാടിന്റെ മക്കളുടെ ഭൂമി കൈയേറിയാണ് നമ്മൾ നമ്മളായത്.",
+          "ആ പ്രതിഷേധമാണ് ശീർഷകത്തിൽ കാണുന്നത്."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "news",
+    "ml": "ബ്രേക്കിങ് ന്യൂസ്",
+    "en": "പാഠം 6 · Breaking News",
+    "sets": [
+      {
+        "id": "news-sum2",
+        "summary": true,
+        "title": "സംഗ്രഹം",
+        "en": "Chapter summary. Hear this first.",
+        "lines": [
+          "പാഠം ആറ്. ബ്രേക്കിങ് ന്യൂസ്.",
+          "ലോകത്ത് ആദ്യമായി ആരാച്ചാരായി നിയമിക്കപ്പെട്ട ചേതന ഗൃദ്ധാ മല്ലിക് എന്ന പെൺകുട്ടിയുടെ കഥയാണ് ആരാച്ചാർ എന്ന നോവലിൽ കെ. ആർ. മീര ആവിഷ്ക്കരിച്ചിരിക്കുന്നത്.",
+          "സ്ത്രീ ശക്തിയുടെ പ്രതീകമാണ് ചേതന.",
+          "ആരാച്ചാർ എന്നാൽ വധശിക്ഷയ്ക്കു വിധിക്കപ്പെട്ടവർക്ക് ചരടു മുറുക്കി കൊലപ്പെടുത്തുന്ന ആൾ.",
+          "ചേതനയും അച്ഛനും ഇറങ്ങി ചെല്ലുന്നത് ഷൂട്ട് ചെയ്യാൻ ക്യാമറാമാൻ തക്കം പാർത്തിരിക്കുകയായിരുന്നു.",
+          "യതീന്ദ്രനാഥ് ബാനർജിയുടെ തൂക്കിക്കൊല വരെ ചേതന ചാനലിന്റെ കൂടെ ഉണ്ടാകും."
+        ]
+      },
+      {
+        "id": "news-art2",
+        "title": "അർത്ഥം",
+        "en": "Meanings from his notes",
+        "lines": [
+          "തക്കം പാർത്തിരിക്കുക. അവസരം നോക്കിയിരിക്കുക.",
+          "തസ്തിക. ഔദ്യോഗിക സ്ഥാനം.",
+          "ഫെമിനിസ്റ്റ്. സ്ത്രീസമത്വവാദി.",
+          "ആരാച്ചാർ. വധശിക്ഷയ്ക്കു വിധിക്കപ്പെട്ടവർക്ക് ചരടു മുറുക്കി കൊലപ്പെടുത്തുന്ന ആൾ."
+        ]
+      },
+      {
+        "id": "news-par2",
+        "title": "പര്യായം",
+        "en": "Synonyms from his notes",
+        "lines": [
+          "മുടി. വേണി, കേശം.",
+          "ദൃശ്യം. കാഴ്ച, ദർശനം.",
+          "സ്ത്രീ. നാരി, വനിത.",
+          "മുഖം. വദനം, ആനനം.",
+          "കാലപുരി. യമലോകം, നരകം."
+        ]
+      },
+      {
+        "id": "news-vip2",
+        "title": "വിപരീതം",
+        "en": "Opposite word",
+        "lines": [
+          "നരകം. ആനന്ദം, സ്വർഗ്ഗം."
+        ]
+      },
+      {
+        "id": "news-piri2",
+        "title": "പിരിച്ചെഴുതുക",
+        "en": "Split the joined words",
+        "lines": [
+          "തൂക്കിക്കൊല. തൂക്കി, കൊല.",
+          "ലോകത്താദ്യമായി. ലോകത്ത്, ആദ്യമായി.",
+          "പിതാവും. പിതാ, വും.",
+          "സംസ്ഥാനത്തിന്റെ. സംസ്ഥാനം, ന്റെ."
+        ]
+      },
+      {
+        "id": "news-q1",
+        "title": "തക്കം പാർത്തിരിക്കുക",
+        "en": "Question 1",
+        "lines": [
+          "ഞാനും അച്ഛനും ഇറങ്ങി ചെല്ലുന്നത് ഷൂട്ട് ചെയ്യാൻ സന്ദീപ് കുമാറിന്റെ ക്യാമറാമാൻ തക്കം പാർത്തിരിക്കുകയായിരുന്നു.",
+          "തക്കം പാർത്തിരിക്കുക എന്ന പ്രയോഗം കൊണ്ട് അർത്ഥമാക്കുന്നത് എന്ത്?",
+          "ഉത്തരം. അവസരം നോക്കിയിരിക്കുക."
+        ]
+      },
+      {
+        "id": "news-q2",
+        "title": "കാര്യം, കാരണം",
+        "en": "Question 2. Is the fact right, is the reason right?",
+        "lines": [
+          "അച്ഛൻ അതു കേട്ട് വിടർന്നു ചിരിച്ചു.",
+          "കാരണം. മകൾക്ക് ജോലി കിട്ടിയതിലുള്ള സന്തോഷം.",
+          "ഉത്തരം. കാര്യം ശരി. കാരണം തെറ്റ്."
+        ]
+      },
+      {
+        "id": "news-q3",
+        "title": "ഒറ്റവാക്യമാക്കുക",
+        "en": "Question 3. Join into one sentence without changing the meaning",
+        "lines": [
+          "പ്രേക്ഷകരോട് ഒരു കാര്യം അറിയിക്കാൻ ചാനലിന് അഭിമാനമുണ്ട്.",
+          "യതീന്ദ്രനാഥ് ബാനർജിയുടെ തൂക്കിക്കൊല വരെയുള്ള എല്ലാ ദിവസങ്ങളിലും ചേതന ചാനലിന്റെ കൂടെ ഉണ്ടാകും.",
+          "ഉത്തരം. യതീന്ദ്രനാഥ് ബാനർജിയുടെ തൂക്കിക്കൊല വരെയുള്ള എല്ലാ ദിവസങ്ങളിലും ചേതന ചാനലിന്റെ കൂടെ ഉണ്ടാകുമെന്ന കാര്യം പ്രേക്ഷകരെ അറിയിക്കാൻ ചാനലിന് അഭിമാനമുണ്ട്."
+        ]
+      },
+      {
+        "id": "news-anga",
+        "title": "അംഗവാക്യം, അംഗിവാക്യം",
+        "en": "The small clause and the main clause",
+        "lines": [
+          "ഉദാഹരണം. നാട്ടുകാർക്ക് ഉപകാരപ്പെടുന്ന വിധത്തിൽ ഉതുപ്പാൻ തന്റെ ഭൂമിയിൽ ഒരു കിണർ ഉണ്ടാക്കി.",
+          "അംഗവാക്യം. നാട്ടുകാർക്ക് ഉപകാരപ്പെടുന്ന വിധത്തിൽ.",
+          "അംഗിവാക്യം. ഉതുപ്പാൻ തന്റെ ഭൂമിയിൽ ഒരു കിണർ ഉണ്ടാക്കി.",
+          "അംഗവാക്യം പ്രധാന വാക്യത്തെ ആശ്രയിച്ചു നിൽക്കുന്നു.",
+          "അംഗിവാക്യത്തിന് സ്വതന്ത്രമായ അർത്ഥമുണ്ട്."
+        ]
+      },
+      {
+        "id": "news-voice",
+        "title": "പ്രയോഗം മാറ്റുക",
+        "en": "Change the sentence. He should say the second line.",
+        "lines": [
+          "ഞാൻ ബാല്യകാലസഖി വായിച്ചു.",
+          "മാറ്റിയാൽ. ബാല്യകാലസഖി എന്നാൽ വായിക്കപ്പെട്ടു.",
+          "അമ്മ മകനെ ആശ്വസിപ്പിച്ചു.",
+          "മാറ്റിയാൽ. മകൻ അമ്മയാൽ ആശ്വസിപ്പിക്കപ്പെട്ടു."
+        ]
+      }
+    ]
+  }
+]
+</script>
+
+<script>
+const lessons = JSON.parse(document.getElementById("lessons").textContent);
+const nav = document.getElementById("nav");
+const main = document.getElementById("main");
+const statusEl = document.getElementById("status");
+const doneKey = "ml8-heard";
+const heard = new Set(JSON.parse(localStorage.getItem(doneKey) || "[]"));
+
+let play = null;
+let slow = true;
+let token = 0;
+const speaker = new Audio();
+let finish = null;
+
+function stopSpeaker() {
+  if (finish) {
+    const cancel = finish;
+    finish = null;
+    speaker.removeEventListener("ended", cancel.onEnd);
+    speaker.removeEventListener("error", cancel.onErr);
+    cancel.stop();
+  }
+  speaker.pause();
+}
+
+function showStatus(text) {
+  statusEl.textContent = text;
+  statusEl.classList.add("show");
+}
+
+function malayalamVoice() {
+  return speechSynthesis.getVoices().find(v => /^ml/i.test(v.lang)) || null;
+}
+
+function stopPlay() {
+  token += 1;
+  stopSpeaker();
+  speechSynthesis.cancel();
+  document.querySelectorAll(".line.on, .set.playing").forEach(el => {
+    el.classList.remove("on", "playing");
+  });
+  document.querySelectorAll("button.play").forEach(btn => { btn.textContent = "Play"; });
+  play = null;
+}
+
+function playUrl(url, mine) {
+  return new Promise((resolve, reject) => {
+    if (token !== mine) {
+      reject(new Error("stopped"));
+      return;
+    }
+    stopSpeaker();
+    if (token !== mine) {
+      reject(new Error("stopped"));
+      return;
+    }
+    let settled = false;
+    const done = (err) => {
+      if (settled) return;
+      settled = true;
+      speaker.removeEventListener("ended", onEnd);
+      speaker.removeEventListener("error", onErr);
+      if (finish && finish.onEnd === onEnd) finish = null;
+      if (err) reject(err);
+      else resolve();
+    };
+    const onEnd = () => done(token === mine ? null : new Error("stopped"));
+    const onErr = () => done(new Error(token === mine ? "audio" : "stopped"));
+    finish = { onEnd, onErr, stop: () => done(new Error("stopped")) };
+    speaker.playbackRate = slow ? 0.86 : 1;
+    speaker.addEventListener("ended", onEnd);
+    speaker.addEventListener("error", onErr);
+    const same = speaker.src && speaker.src.endsWith(url);
+    if (!same) speaker.src = url;
+    else {
+      try { speaker.currentTime = 0; } catch (e) {}
+    }
+    const started = speaker.play();
+    if (started && started.catch) {
+      started.catch(err => {
+        const aborted = err && err.name === "AbortError";
+        done(new Error(aborted || token !== mine ? "stopped" : "audio"));
+      });
+    }
+  });
+}
+
+function speakLine(text, localUrl, mine) {
+  const voice = malayalamVoice();
+  if (voice) {
+    return new Promise((resolve, reject) => {
+      if (token !== mine) {
+        reject(new Error("stopped"));
+        return;
+      }
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = "ml-IN";
+      u.voice = voice;
+      u.rate = slow ? 0.82 : 1;
+      u.onend = () => {
+        if (token === mine) resolve();
+        else reject(new Error("stopped"));
+      };
+      u.onerror = () => reject(new Error(token === mine ? "voice" : "stopped"));
+      speechSynthesis.cancel();
+      speechSynthesis.speak(u);
+    });
+  }
+  const remote = "https://translate.googleapis.com/translate_tts?ie=UTF-8&client=gtx&tl=ml&q="
+    + encodeURIComponent(text);
+  return playUrl(localUrl, mine).catch(err => {
+    if (token !== mine) throw err;
+    return playUrl(remote, mine);
+  });
+}
+
+async function runSet(setId, from, onlyOne) {
+  const card = document.querySelector('[data-set="' + setId + '"]');
+  const items = [...card.querySelectorAll(".line")];
+  const end = onlyOne ? from + 1 : items.length;
+  stopPlay();
+  const mine = token;
+  play = { setId, audio: null };
+  card.classList.add("playing");
+  card.querySelector("button.play").textContent = "Stop";
+  try {
+    for (let i = from; i < end; i++) {
+      if (token !== mine) return;
+      items.forEach(li => li.classList.remove("on"));
+      items[i].classList.add("on");
+      items[i].scrollIntoView({ block: "nearest", behavior: "smooth" });
+      await speakLine(items[i].dataset.say, "voice/" + setId + "-" + i + ".mp3", mine);
+    }
+    if (token !== mine) return;
+    if (!onlyOne && card.querySelector(".again").classList.contains("on")) {
+      runSet(setId, 0, false);
+      return;
+    }
+  } catch (err) {
+    if (token === mine && err && err.message !== "stopped") {
+      showStatus("The sound needs internet. Turn on Wi‑Fi, then press Play again.");
+    }
+  }
+  if (token === mine) stopPlay();
+}
+
+function render(id) {
+  const lesson = lessons.find(l => l.id === id);
+  nav.querySelectorAll("button").forEach(b => b.classList.toggle("on", b.dataset.id === id));
+  main.innerHTML = lesson.sets.map(set => `
+    <section class="set ${set.summary ? "summary" : ""} ${heard.has(set.id) ? "done" : ""}" data-set="${set.id}">
+      <div class="set-head">
+        <div>
+          <h2>${set.title}</h2>
+          <p class="en">${set.en}</p>
+        </div>
+        <div class="controls">
+          <button class="play" type="button">Play</button>
+          <button class="ghost slow ${slow ? "on" : ""}" type="button">Slow</button>
+          <button class="ghost again" type="button">Again</button>
+          <button class="ghost mark" type="button">${heard.has(set.id) ? "Heard" : "Mark heard"}</button>
+        </div>
+      </div>
+      <ul class="lines">
+        ${set.lines.map(line => `<li class="line" data-say="${line.replace(/"/g, "&quot;")}"><button class="mini" type="button" aria-label="Play this line">▶</button><span>${line}</span></li>`).join("")}
+      </ul>
+    </section>
+  `).join("");
+}
+
+nav.innerHTML = lessons.map((l, i) =>
+  `<button type="button" data-id="${l.id}" class="${i === 0 ? "on" : ""}">${l.ml}<small>${l.en}</small></button>`
+).join("");
+
+nav.addEventListener("click", e => {
+  const btn = e.target.closest("button");
+  if (!btn) return;
+  stopPlay();
+  render(btn.dataset.id);
+});
+
+main.addEventListener("click", e => {
+  const card = e.target.closest(".set");
+  if (!card) return;
+  const setId = card.dataset.set;
+  if (e.target.closest("button.play")) {
+    if (play && play.setId === setId) stopPlay();
+    else runSet(setId, 0);
+    return;
+  }
+  if (e.target.closest(".mini")) {
+    const li = e.target.closest(".line");
+    const index = [...card.querySelectorAll(".line")].indexOf(li);
+    runSet(setId, index, true);
+    return;
+  }
+  if (e.target.closest(".again")) {
+    e.target.closest(".again").classList.toggle("on");
+    return;
+  }
+  if (e.target.closest(".slow")) {
+    slow = !slow;
+    document.querySelectorAll(".slow").forEach(b => b.classList.toggle("on", slow));
+    return;
+  }
+  if (e.target.closest(".mark")) {
+    if (heard.has(setId)) heard.delete(setId); else heard.add(setId);
+    localStorage.setItem(doneKey, JSON.stringify([...heard]));
+    card.classList.toggle("done", heard.has(setId));
+    e.target.closest(".mark").textContent = heard.has(setId) ? "Heard" : "Mark heard";
+  }
+});
+
+speechSynthesis.onvoiceschanged = () => {};
+render(lessons[0].id);
+</script>
+</body>
+</html>
